@@ -2,21 +2,32 @@ package br.com.shiroshima.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String cpf;
+
+    @Column(nullable = false, unique = true, length = 20)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    private String bio;
+
+    // TODO add posted music
+    // TODO add created playlists
 
     public User() {}
 
-    public User(Long id, String cpf, String password) {
-        this.id = id;
-        this.cpf = cpf;
+    public User(String username, String password, String bio) {
+        this.username = username;
         this.password = password;
+        this.bio = bio;
     }
 
     public Long getId() {
@@ -27,24 +38,47 @@ public class User {
         this.id = id;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getUsername() {
+        return username;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", cpf='" + cpf + '\'' +
-                ", password='" + password + '\'' +
+                "username='" + username + '\'' +
+                ", id=" + id +
+                ", bio='" + bio + '\'' +
                 '}';
     }
 }
