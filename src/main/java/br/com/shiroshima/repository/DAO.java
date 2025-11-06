@@ -1,5 +1,6 @@
 package br.com.shiroshima.repository;
 
+import br.com.shiroshima.exception.DAOException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
@@ -9,7 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class DAO<T, ID extends Serializable> {
+public abstract class DAO<T, Long extends Serializable> {
 
     protected final EntityManager em;
     private final Class<T> persistentClass;
@@ -25,7 +26,7 @@ public abstract class DAO<T, ID extends Serializable> {
             em.persist(entity);
             return entity;
         } catch (PersistenceException e) {
-            throw new RuntimeException("Erro ao salvar a entidade", e);
+            throw new DAOException("Error saving");
         }
     }
 
@@ -33,7 +34,7 @@ public abstract class DAO<T, ID extends Serializable> {
         try {
             return em.merge(entity);
         } catch (PersistenceException e) {
-            throw new RuntimeException("Erro ao atualizar a entidade", e);
+            throw new DAOException("Error updating entity");
         }
     }
 
@@ -42,15 +43,7 @@ public abstract class DAO<T, ID extends Serializable> {
             T managedEntity = em.merge(entity);
             em.remove(managedEntity);
         } catch (PersistenceException e) {
-            throw new RuntimeException("Erro ao deletar a entidade", e);
+            throw new DAOException("Error deleting entity");
         }
-    }
-
-    public Optional<T> findById(ID id) {
-        return Optional.ofNullable(em.find(persistentClass, id));
-    }
-
-    public List<T> findAll() {
-        return em.createQuery("FROM " + persistentClass.getName(), persistentClass).getResultList();
     }
 }
