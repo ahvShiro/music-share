@@ -1,17 +1,30 @@
 package br.com.shiroshima;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import br.com.shiroshima.entity.User;
+import br.com.shiroshima.repository.UserDAO;
+import br.com.shiroshima.service.UserService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+public class Main {
+
+    public static void main(String[] args) {
+        try (EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
+             EntityManager em = emf.createEntityManager()) {
+
+            UserDAO dao = new UserDAO(em);
+            UserService service = new UserService(dao, em);
+
+            try {
+                User user = service.create("Xx_Junin_Ruindade_Pura_xX", "Senha@123", "Test user bio");
+                System.out.println("User created: " + user);
+            } catch (Exception e) {
+                System.out.println("User might already exist: " + e.getMessage());
+            }
+
+            boolean authApproval = service.auth("Xx_Junin_Ruindade_Pura_xX", "Senha@123");
+            System.out.println("Authentication successful: " + authApproval);
         }
     }
 }
