@@ -3,10 +3,9 @@ package br.com.shiroshima.repository;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.DAOException;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 
-import java.util.List;
 import java.util.Optional;
 
 public class UserDAO extends DAO<User, Long> {
@@ -30,6 +29,9 @@ public class UserDAO extends DAO<User, Long> {
                     .setParameter(1, username)
                     .getSingleResult();
             return Optional.ofNullable(possibleUser);
+        } catch (NoResultException e) {
+            // Nenhum usuário encontrado, retorna Optional vazio
+            return Optional.empty();
         } catch (PersistenceException e) {
             throw new DAOException("Error fetching users with username: " + username);
         }

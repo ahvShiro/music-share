@@ -1,6 +1,6 @@
 package br.com.shiroshima;
 
-import br.com.shiroshima.entity.User;
+import br.com.shiroshima.controller.UserController;
 import br.com.shiroshima.repository.UserDAO;
 import br.com.shiroshima.service.UserService;
 import jakarta.persistence.EntityManager;
@@ -16,15 +16,9 @@ public class Main {
             UserDAO dao = new UserDAO(em);
             UserService service = new UserService(dao, em);
 
-            try {
-                User user = service.create("Xx_Junin_Ruindade_Pura_xX", "Senha@123", "Test user bio");
-                System.out.println("User created: " + user);
-            } catch (Exception e) {
-                System.out.println("User might already exist: " + e.getMessage());
-            }
-
-            boolean authApproval = service.auth("Xx_Junin_Ruindade_Pura_xX", "Senha@123");
-            System.out.println("Authentication successful: " + authApproval);
+            // Inicia o controller com interface de login
+            UserController controller = new UserController(service);
+            controller.start();
         }
     }
 }

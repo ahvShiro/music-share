@@ -35,7 +35,7 @@ public class UserService {
         }
 
         if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-            throw new BusinessRuleException("Password must have at least one lowercase and uppercase character, one digit and one special character");
+            throw new BusinessRuleException("Password must have at least one lowercase and uppercase character, one digit, and one special character");
         }
     }
 
@@ -74,6 +74,17 @@ public class UserService {
         try {
             em.getTransaction().begin();
 
+            // Checa se existe um user com esse username
+            try {
+                User existingUser = searchByUsername(username);
+                // Se chegou aqui, o usuário já existe
+                em.getTransaction().rollback();
+                return null;
+            } catch (EntityNotFoundException e) {
+                // Usuário não existe, pode continuar com a criação
+            }
+
+            // Checa se a senha é válida
             passwordValidation(password);
 
             String hashedPassword = PasswordHasher.hashPassword(password);
@@ -82,9 +93,18 @@ public class UserService {
             em.getTransaction().commit();
 
             return newUser;
+        } catch (BusinessRuleException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e; // Repassa a exceção de validação de senha
         } catch (RuntimeException e) {
-            em.getTransaction().rollback();
-            throw new ServiceException("Failed to create user");
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            // Mostra a exceção real para debug
+            e.printStackTrace();
+            throw new ServiceException("Failed to create user: " + e.getMessage());
         }
     }
 
@@ -93,21 +113,21 @@ public class UserService {
         return PasswordHasher.passwordMatchesHash(password, user.getPassword());
     }
 
-//    public User update(Long id, String username, String bio) {
-//        try {
-//            em.getTransaction().begin();
-//            User user = searchById(id);
-//
-//            User newUser = dao.save(new User(username, , bio));
-//
-//            em.getTransaction().commit();
-//
-//            return newUser;
-//        } catch (DAOException e) {
-//            em.getTransaction().rollback();
-//            throw new RepositoryException("Failed to create user");
-//        }
-//    }
+    public User update(Long id, String username, String bio) {
+        try {
+            em.getTransaction().begin();
+            User user = searchById(id);
+
+            User newUser = dao.save(new User(username, user.getPassword(), bio));
+
+            em.getTransaction().commit();
+
+            return newUser;
+        } catch (DAOException e) {
+            em.getTransaction().rollback();
+            throw new DAOException("Failed to update user");
+        }
+    }
 
     public User searchById(Long id) {
         Optional<User> user = dao.findById(id);
