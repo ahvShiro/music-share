@@ -2,6 +2,8 @@ package br.com.shiroshima.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,7 +21,9 @@ public class User {
 
     private String bio;
 
-    // TODO add posted music
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+
     // TODO add created playlists
 
     public User() {}
@@ -60,6 +64,24 @@ public class User {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public void addPost(Post post) {
+        posts.add(post);
+        post.setOwner(this);
+    }
+
+    public void removePost(Post post) {
+        posts.remove(post);
+        post.setOwner(null);
     }
 
     @Override
