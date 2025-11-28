@@ -1,21 +1,18 @@
 package br.com.shiroshima;
 
 
-import br.com.shiroshima.entity.User;
+import br.com.shiroshima.controller.UserController;
 import br.com.shiroshima.repository.UserDAO;
-import br.com.shiroshima.security.AuthContext;
 import br.com.shiroshima.service.UserService;
+import br.com.shiroshima.view.UserView;
 
 public class Main {
 
     public static void main(String[] args) {
         UserService service = new UserService(new UserDAO());
+        UserController controller = new UserController(service);
+        UserView view = new UserView(controller);
 
-        User user = service.create("Teste", "123ABCabc!@#", "Hello world");
-
-        boolean isAuth = service.auth("Teste", "123ABCabc!@#");
-
-        System.out.println(isAuth);
-        System.out.println(AuthContext.getCurrentUser());
+        view.runMenu();
     }
 }

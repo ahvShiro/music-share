@@ -61,6 +61,10 @@ public class UserService {
 
         User user = searchByUsername(username);
 
+        if (user == null) {
+            throw new BusinessRuleException("Username or password incorrect");
+        }
+
         boolean isAuth = PasswordHasher.passwordMatchesHash(password, user.getPassword());
 
         if (isAuth) {
@@ -121,10 +125,15 @@ public class UserService {
             User user = AuthContext.getCurrentUser();
 
             AuthService.assureUserIsOwner(user);
-            usernameValidation(username);
 
-            user.setUsername(username);
-            user.setBio(bio);
+            if (!username.isBlank()) {
+                usernameValidation(username);
+                user.setUsername(username);
+            }
+
+            if (!bio.isBlank()) {
+                user.setBio(bio);
+            }
 
             return dao.update(user);
         } catch (DAOException e) {
