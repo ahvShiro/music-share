@@ -52,16 +52,22 @@ public class UserService {
             throw new BusinessRuleException("Your username is too long (max 20 characters)");
         }
     }
-    public boolean auth(String username, String password) {
+
+    public User auth(String username, String password) {
+
+        if (username == null && password == null) {
+            throw new BusinessRuleException("Please fill both fields");
+        }
+
         User user = searchByUsername(username);
 
         boolean isAuth = PasswordHasher.passwordMatchesHash(password, user.getPassword());
 
         if (isAuth) {
             AuthContext.login(user);
-            return true;
+            return user;
         }
-        return false;
+        throw new BusinessRuleException("Username or password incorrect");
     }
 
     // CRUD
