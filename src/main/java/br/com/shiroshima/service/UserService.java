@@ -3,6 +3,7 @@ package br.com.shiroshima.service;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.*;
 import br.com.shiroshima.repository.UserDAO;
+import br.com.shiroshima.security.AuthContext;
 import br.com.shiroshima.security.PasswordHasher;
 import jakarta.persistence.EntityManager;
 
@@ -11,14 +12,16 @@ import java.util.Optional;
 
 public class UserService {
     private final UserDAO dao;
-    private final EntityManager em;
 
-    public UserService(UserDAO dao, EntityManager em) {
+    public UserService(UserDAO dao) {
         this.dao = dao;
-        this.em = em;
     }
 
+    // VALIDATIONS
     private void passwordValidation(String password) {
+        if (password == null || password.isBlank()) {
+            throw new BusinessRuleException("Password cannot be empty");
+        }
         if (password.length() <= 5) {
             throw new BusinessRuleException("Password must have at least 5 characters");
         }
@@ -38,106 +41,98 @@ public class UserService {
             throw new BusinessRuleException("Password must have at least one lowercase and uppercase character, one digit, and one special character");
         }
     }
+    private void usernameValidation(String username) {
+        if (username == null || username.isBlank()) {
+            throw new BusinessRuleException("Username cannot be empty");
+        }
+        if (searchByUsername(username) != null) {
+            throw new BusinessRuleException("User already exists");
+        }
+        if (username.length() > 20) {
+            throw new BusinessRuleException("Your username is too long (max 20 characters)");
+        }
+    }
+    public boolean auth(String username, String password) {
+        User user = searchByUsername(username);
 
-    public User updatePassword(Long id, String passwordCheck, String newPassword) {
+        boolean isAuth = PasswordHasher.passwordMatchesHash(password, user.getPassword());
+
+        if (isAuth) {
+            AuthContext.login(user);
+            return true;
+        }
+        return false;
+    }
+
+    // CRUD
+    public User create(String username, String password, String bio) {
         try {
-            em.getTransaction().begin();
 
-            User user = searchById(id);
+            usernameValidation(username);
+            passwordValidation(password);
+
+            String hashedPassword = PasswordHasher.hashPassword(password);
+            return dao.save(new User(username, hashedPassword, bio));
+
+        } catch (BusinessRuleException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new ServiceException("Failed to create user: " + e.getMessage());
+        }
+    }
+
+    public User updatePassword(String passwordCheck, String newPassword) {
+        try {
+            User user = AuthContext.getCurrentUser();
+
             String hashedOldPassword = user.getPassword();
 
             if (!PasswordHasher.passwordMatchesHash(passwordCheck, hashedOldPassword)) {
-                throw new InputMismatchException("Current password doesn't match");
+                throw new BusinessRuleException("Current password doesn't match");
             }
             if (PasswordHasher.passwordMatchesHash(newPassword, hashedOldPassword)) {
-                throw new InputMismatchException("New password cannot be the same as the old password");
+                throw new BusinessRuleException("New password cannot be the same as the old password");
             }
 
             passwordValidation(newPassword);
 
             String hashedNewPassword = PasswordHasher.hashPassword(newPassword);
             user.setPassword(hashedNewPassword);
-            dao.update(user);
 
-            em.getTransaction().commit();
+            dao.update(user);
 
             return user;
 
         } catch (RuntimeException e) {
-            em.getTransaction().rollback();
             throw new ServiceException("Failed to update user password");
         }
 
     }
 
-    public User create(String username, String password, String bio) {
+    public User update(String username, String bio) {
         try {
-            em.getTransaction().begin();
+            User user = AuthContext.getCurrentUser();
 
-            // Checa se existe um user com esse username
-            try {
-                User existingUser = searchByUsername(username);
-                // Se chegou aqui, o usuário já existe
-                em.getTransaction().rollback();
-                return null;
-            } catch (EntityNotFoundException e) {
-                // Usuário não existe, pode continuar com a criação
-            }
+            AuthService.assureUserIsOwner(user);
+            usernameValidation(username);
 
-            // Checa se a senha é válida
-            passwordValidation(password);
+            user.setUsername(username);
+            user.setBio(bio);
 
-            String hashedPassword = PasswordHasher.hashPassword(password);
-            User newUser = dao.save(new User(username, hashedPassword, bio));
-
-            em.getTransaction().commit();
-
-            return newUser;
-        } catch (BusinessRuleException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e; // Repassa a exceção de validação de senha
-        } catch (RuntimeException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            // Mostra a exceção real para debug
-            e.printStackTrace();
-            throw new ServiceException("Failed to create user: " + e.getMessage());
-        }
-    }
-
-    public boolean auth(String username, String password) {
-        User user = searchByUsername(username);
-        return PasswordHasher.passwordMatchesHash(password, user.getPassword());
-    }
-
-    public User update(Long id, String username, String bio) {
-        try {
-            em.getTransaction().begin();
-            User user = searchById(id);
-
-            User newUser = dao.save(new User(username, user.getPassword(), bio));
-
-            em.getTransaction().commit();
-
-            return newUser;
+            return dao.update(user);
         } catch (DAOException e) {
-            em.getTransaction().rollback();
-            throw new DAOException("Failed to update user");
+            throw new ServiceException("Failed to update user: " + e.getMessage());
         }
     }
 
     public User searchById(Long id) {
         Optional<User> user = dao.findById(id);
-        if (user.isEmpty()) throw new EntityNotFoundException("Entity not found with id: " + id);
-        return user.get();
+        return user.orElse(null);
     }
 
     public User searchByUsername(String username) {
         Optional<User> user = dao.findByUsername(username);
-        if (user.isEmpty()) throw new EntityNotFoundException("Entity not found with username: " + username);
-        return user.get();
+        return user.orElse(null);
     }
 }
