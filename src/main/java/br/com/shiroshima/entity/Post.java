@@ -20,7 +20,7 @@ public class Post {
     private String music;
     private String description;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
