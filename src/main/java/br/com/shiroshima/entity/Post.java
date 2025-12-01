@@ -3,7 +3,9 @@ package br.com.shiroshima.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "posts")
@@ -11,29 +13,33 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String title;
-    private LocalDate date;
+    private LocalDateTime createdAt;
     private String music;
     private String description;
-    @OneToMany
-    private List<Comment> comments;
+    
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
+//    vamos deixar isso pra dps
+//    @OneToMany
+//    private List<Comment> comments;
 
     public Post(){}
 
-    public Post(String title, LocalDate date, String music, String description, List<Comment> comments) {
+    public Post(String title, String music, String description, User owner) {
         this.title = title;
-        this.date = date;
+        this.createdAt = LocalDateTime.now();
         this.music = music;
         this.description = description;
-        this.comments = comments;
+        this.owner = owner;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -44,12 +50,12 @@ public class Post {
         this.title = title;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getMusic() {
@@ -68,15 +74,34 @@ public class Post {
         this.description = description;
     }
 
-    public void addSingleComment(Comment comment) {
-        this.comments.add(comment);
+    public User getOwner() {
+        return owner;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Post post)) return false;
+        return Objects.equals(id, post.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", createdAt=" + createdAt +
+                ", music='" + music + '\'' +
+                ", description='" + description + '\'' +
+                ", owner=" + owner +
+                '}';
     }
 }
