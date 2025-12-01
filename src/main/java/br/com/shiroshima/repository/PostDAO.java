@@ -4,7 +4,6 @@ import br.com.shiroshima.entity.Post;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.DAOException;
 import br.com.shiroshima.security.AuthContext;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 
 import java.util.List;
@@ -29,8 +28,8 @@ public class PostDAO extends DAO<Post, Long> {
         try {
             String jpql = "SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(:title)";
             return em.createQuery(jpql, Post.class)
-             .setParameter("title", "%" + title + "%")
-             .getResultList();
+                    .setParameter("title", "%" + title + "%")
+                    .getResultList();
         } catch (PersistenceException e) {
             throw new DAOException("Error fetching posts");
         }
@@ -46,12 +45,21 @@ public class PostDAO extends DAO<Post, Long> {
         }
     }
 
-    public List<Post> findOwn() {
-        User owner = AuthContext.getCurrentUser();
+    public List<Post> findByOwnerId(Long userId) {
         try {
-            return findByOwner(owner);
+            String jpql = "SELECT p FROM Post p JOIN FETCH p.owner WHERE p.owner.id = :userId ORDER BY p.createdAt DESC";
+            return em.createQuery(jpql, Post.class).setParameter("userId", userId).getResultList();
         } catch (PersistenceException e) {
-            throw new DAOException("Error fetching posts for user: " + owner.getUsername());
+            throw new DAOException("Error fetching posts from user with ID: " + userId);
+        }
+    }
+
+    public List<Post> findOwn() {
+        Long ownerId = AuthContext.getCurrentUser().getId();
+        try {
+            return findByOwnerId(ownerId);
+        } catch (PersistenceException e) {
+            throw new DAOException("Error fetching your own posts");
         }
     }
 
@@ -62,5 +70,17 @@ public class PostDAO extends DAO<Post, Long> {
         } catch (PersistenceException e) {
             throw new DAOException("Error fetching all posts");
         }
+    }
+
+    public List<Post> findByOwnerUsermane(String username) {
+        try {
+            String jpql = "SELECT p FROM Post p JOIN FETCH p.owner WHERE LOWER(p.owner.username) = LOWER(:username) ORDER BY p.createdAt DESC";
+
+            return em.createQuery(jpql, Post.class).setParameter("username", username).getResultList();
+
+        } catch (PersistenceException e) {
+            throw new DAOException("Error finding posts for username: " + username);
+        }
+
     }
 }
