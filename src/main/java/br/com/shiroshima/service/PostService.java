@@ -83,16 +83,40 @@ public class PostService {
     }
 
     public Post findById(Long id) {
+        if (id == null || id <= (long) 0) {
+            throw new BusinessRuleException("Invalid Id");
+        }
         Optional<Post> post = dao.findById(id);
         return post.orElse(null);
     }
 
     public List<Post> findByTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new BusinessRuleException("Invalid Title");
+        }
         return dao.findByTitle(title);
     }
 
+    // só pra caso seja necessário (talvez nunca)
     public List<Post> findByOwner(User owner) {
+        if (owner == null) {
+            throw new BusinessRuleException("Invalid User");
+        }
         return dao.findByOwner(owner);
+    }
+
+    public List<Post> findByOwnerId(Long userId) {
+        if (userId == null || userId <= (long) 0) {
+            throw new BusinessRuleException("Invalid User Id");
+        }
+        return dao.findByOwnerId(userId);
+    }
+
+    public List<Post> findByOwnerUsername(String username) {
+        if (username == null || username.isBlank()) {
+            throw new BusinessRuleException("Invalid Username");
+        }
+        return dao.findByOwnerUsermane(username);
     }
 
     public List<Post> findOwn() {
