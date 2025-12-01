@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class UserView {
 
-    private UserController controller;
     private final Scanner scanner = new Scanner(System.in);
+    private final UserController controller;
 
     public UserView(UserController controller) {
         this.controller = controller;
@@ -91,15 +91,17 @@ public class UserView {
     }
 
     public void runMenu() {
-        while (true) {
+        boolean isExit = false;
+
+        while (!isExit) {
             System.out.println();
-            System.out.println("=== User Menu ===");
+            MainView.printHeader("User Menu");
             System.out.println("1 - Authenticate");
             System.out.println("2 - Create user");
             System.out.println("3 - Update profile");
             System.out.println("4 - Update password");
             System.out.println("5 - Search user");
-            System.out.println("0 - Exit");
+            System.out.println("0 - Return");
             System.out.print("> ");
 
             String option = scanner.nextLine().trim();
@@ -111,7 +113,7 @@ public class UserView {
                 case "5" -> searchByUsername();
                 case "0" -> {
                     System.out.println("Exiting user menu.");
-                    return;
+                    isExit = true;
                 }
                 default -> System.out.println("Invalid option, try again.");
             }
