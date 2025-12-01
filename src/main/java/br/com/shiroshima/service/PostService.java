@@ -87,13 +87,16 @@ public class PostService {
         return post.orElse(null);
     }
 
-    public Post findByTitle(String title) {
-        Optional<Post> post = dao.findByTitle(title);
-        return post.orElse(null);
+    public List<Post> findByTitle(String title) {
+        return dao.findByTitle(title);
     }
 
     public List<Post> findByOwner(User owner) {
         return dao.findByOwner(owner);
+    }
+
+    public List<Post> findOwn() {
+        return dao.findOwn();
     }
 
     public List<Post> findAll() {
