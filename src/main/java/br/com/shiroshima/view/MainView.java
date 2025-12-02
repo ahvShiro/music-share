@@ -9,10 +9,12 @@ public class MainView {
     private final Scanner scanner = new Scanner(System.in);
     private final UserView userView;
     private final PostView postView;
+    private final CommentView commentView;
 
-    public MainView(UserView userView, PostView postView) {
+    public MainView(UserView userView, PostView postView, CommentView commentView) {
         this.userView = userView;
         this.postView = postView;
+        this.commentView = commentView;
     }
 
     static void printHeader(String title) {
@@ -37,7 +39,6 @@ public class MainView {
                 switch (option) {
                     case "1" -> userView.authUser();
                     case "2" -> userView.createUser();
-
                     case "0" -> {
                         System.out.println("Exiting user menu.");
                         isExit = true;
@@ -51,6 +52,7 @@ public class MainView {
                 printHeader("Main Menu");
                 System.out.println("1 - User settings");
                 System.out.println("2 - Post menu");
+                System.out.println("3 - Comment menu");
                 System.out.println("0 - Return");
                 System.out.print("> ");
 
@@ -58,7 +60,7 @@ public class MainView {
                 switch (option) {
                     case "1" -> userView.runMenu();
                     case "2" -> postView.runMenu();
-
+                    case "3" -> commentView.runMenu();
                     case "0" -> {
                         System.out.println("Exiting main menu.");
                         isExit = true;
