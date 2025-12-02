@@ -15,6 +15,28 @@ public class UserView {
         this.controller = controller;
     }
 
+    public void printUser(User user) {
+        if (user == null) {
+            System.out.println("No user to display.");
+            return;
+        }
+
+        Long userId = user.getId();
+        String username = user.getUsername();
+        int postQt = user.getPosts().size();
+        String postOrPosts = postQt <= 1 ? "Post" : "Posts";
+        String bio = user.getBio();
+
+        System.out.printf("== (%d) @%s ==%n", userId, username);
+        System.out.printf("> %s: %d%n", postOrPosts, postQt);
+
+        if (bio != null && !bio.isEmpty()) {
+            System.out.printf("> Bio: %s%n", bio);
+        } else {
+            System.out.println("> (no bio)");
+        }
+    }
+
     public void authUser() {
         MainView.printHeader("AUTH");
         System.out.print("Username: ");
@@ -24,7 +46,8 @@ public class UserView {
 
         ResultDTO<User> result = controller.authUser(username, password);
         if (result.isSuccess()) {
-            System.out.println("Successfully authenticated: " + result.getData());
+            System.out.println("Successfully authenticated!");
+            printUser(result.getData());
         } else {
             System.out.println(result.getMessage());
         }
@@ -41,7 +64,8 @@ public class UserView {
 
         ResultDTO<User> result = controller.createUser(username, password, bio);
         if (result.isSuccess()) {
-            System.out.println("User created: " + result.getData());
+            System.out.println("User created successfully!");
+            printUser(result.getData());
         } else {
             System.out.println(result.getMessage());
         }
@@ -56,7 +80,8 @@ public class UserView {
 
         ResultDTO<User> result = controller.updateUser(username, bio);
         if (result.isSuccess()) {
-            System.out.println("Profile updated: " + result.getData());
+            System.out.println("Profile updated successfully!");
+            printUser(result.getData());
         } else {
             System.out.println(result.getMessage());
         }
@@ -71,7 +96,8 @@ public class UserView {
 
         ResultDTO<User> result = controller.updatePassword(current, neu);
         if (result.isSuccess()) {
-            System.out.println("Password updated for user: " + result.getData());
+            System.out.println("Password updated successfully!");
+            printUser(result.getData());
         } else {
             System.out.println(result.getMessage());
         }
@@ -84,7 +110,8 @@ public class UserView {
 
         ResultDTO<User> result = controller.searchByUsername(username);
         if (result.isSuccess()) {
-            System.out.println("User found: " + result.getData());
+            System.out.println("User found!");
+            printUser(result.getData());
         } else {
             System.out.println(result.getMessage());
         }
