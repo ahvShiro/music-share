@@ -48,15 +48,18 @@ public class PostService {
 
             validateOwner(post);
 
-            if (title != null && !title.trim().isEmpty()) {
-                post.setTitle(title);
+            if (title == null || title.trim().isEmpty()) {
+                throw new BusinessRuleException("Title cannot be empty");
             }
-            if (music != null) {
-                post.setMusic(music);
+            if (music == null) {
+                throw new BusinessRuleException("Music cannot be empty");
             }
-            if (description != null) {
-                post.setDescription(description);
+            if (description == null) {
+                throw new BusinessRuleException("Description cannot be null");
             }
+            post.setTitle(title);
+            post.setMusic(music);
+            post.setDescription(description);
 
             return dao.update(post);
 

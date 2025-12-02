@@ -2,8 +2,8 @@ package br.com.shiroshima.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,9 +24,8 @@ public class Post {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-//    vamos deixar isso pra dps
-//    @OneToMany
-//    private List<Comment> comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Post(){}
 
