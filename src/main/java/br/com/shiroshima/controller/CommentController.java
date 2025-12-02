@@ -60,4 +60,22 @@ public class CommentController {
         }
     }
 
+    public ResultDTO<List<Comment>> findByContent(String content) {
+        try {
+            List<Comment> comments = service.findByContent(content);
+            return ResultDTO.ok(comments);
+        } catch (Exception e) {
+            return ResultDTO.fail(e.getMessage());
+        }
+    }
+
+    public ResultDTO<List<Comment>> findByUsername(String username) {
+        try {
+            List<Comment> comments = service.findByUsername(username);
+            return ResultDTO.ok(comments);
+        } catch (Exception e) {
+            return ResultDTO.fail(e.getMessage());
+        }
+    }
+
 }
