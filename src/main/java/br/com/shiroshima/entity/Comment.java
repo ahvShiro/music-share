@@ -12,34 +12,30 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @Column(length = 250)
     private String content;
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
     public Comment() {}
 
-    public Comment(Post post, String content) {
-        this.post = post;
+    public Comment(String content, Post post, User user) {
         this.content = content;
+        this.post = post;
+        this.user = user;
         this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
     }
 
     public String getContent() {
@@ -56,6 +52,22 @@ public class Comment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -75,6 +87,8 @@ public class Comment {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
+                ", post.id=" + post.getId() +
+                ", user.id=" + user.getId() +
                 '}';
     }
 }
