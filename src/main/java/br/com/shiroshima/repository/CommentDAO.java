@@ -13,6 +13,14 @@ public class CommentDAO extends DAO<Comment, Long> {
         super();
     }
 
+    public List<Comment> findAll() {
+        try {
+            return em.createQuery("SELECT c FROM Comment c ORDER BY c.createdAt DESC", Comment.class).getResultList();
+        } catch (PersistenceException e) {
+            throw new DAOException("Error fetching all comments");
+        }
+    }
+
     public Optional<Comment> findById(Long id) {
         try {
             Comment comment = em.find(Comment.class, id);
