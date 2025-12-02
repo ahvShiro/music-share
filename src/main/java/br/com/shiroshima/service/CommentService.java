@@ -88,4 +88,17 @@ public class CommentService {
         return dao.findByPostId(postId);
     }
 
+    public List<Comment> findByContent(String query) {
+        if (query == null || query.isBlank()) {
+            throw new BusinessRuleException("Invalid Query");
+        }
+        return dao.findByContent(query);
+    }
+
+    public List<Comment> findByUsername(String query) {
+        if (query == null || query.isBlank()) {
+            throw new BusinessRuleException("Invalid Query");
+        }
+        return dao.findByUsername(query);
+    }
 }
