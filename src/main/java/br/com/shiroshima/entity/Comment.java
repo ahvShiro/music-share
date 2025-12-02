@@ -2,7 +2,8 @@ package br.com.shiroshima.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "comments")
@@ -11,10 +12,19 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
     private String content;
+    private LocalDateTime createdAt;
 
     public Comment() {}
+
+    public Comment(Post post, String content) {
+        this.post = post;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -24,12 +34,12 @@ public class Comment {
         this.id = id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Post getPost() {
+        return post;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getContent() {
@@ -40,9 +50,31 @@ public class Comment {
         this.content = content;
     }
 
-    public Comment(Long id, LocalDate date, String content) {
-        this.id = id;
-        this.date = date;
-        this.content = content;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Comment comment)) return false;
+        return Objects.equals(id, comment.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }
