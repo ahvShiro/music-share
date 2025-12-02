@@ -63,7 +63,7 @@ public class PostService {
 
             return dao.update(post);
 
-        } catch (BusinessRuleException | EntityNotFoundException e) {
+        } catch (BusinessRuleException e) {
             throw e;
         } catch (RuntimeException e) {
             throw new ServiceException("Failed to update post: " + e.getMessage());
