@@ -55,8 +55,10 @@ public class CommentService {
     // POR REGRA DE NEGÓCIO UM COMENTÁRIO NÃO PODE SER EDITADO, APENAS DELETADO
     // Alias marquei bobeira por não fazer um esquema de soft delete mas é a vida
     public void delete(Long id) {
+        if (id == null || id <= (long) 0) {
+            throw new BusinessRuleException("Invalid Id");
+        }
         Comment comment = findById(id);
-
         if (comment == null) {
             throw new BusinessRuleException("Comment not found!");
         }
