@@ -1,5 +1,6 @@
 package br.com.shiroshima.view;
 
+import br.com.shiroshima.controller.CommentController;
 import br.com.shiroshima.controller.PostController;
 import br.com.shiroshima.entity.Post;
 import br.com.shiroshima.entity.ResultDTO;
@@ -12,9 +13,11 @@ public class PostView {
 
     private final Scanner scanner = new Scanner(System.in);
     private final PostController controller;
+    private final CommentView commentView;
 
-    public PostView(PostController controller) {
+    public PostView(PostController controller, CommentView commentView) {
         this.controller = controller;
+        this.commentView = commentView;
     }
 
     public void printPost(Post post) {
@@ -221,15 +224,11 @@ public class PostView {
         while (!isExit) {
             System.out.println();
             MainView.printHeader("Post Menu");
-            System.out.println("1 - Create post");
-            System.out.println("2 - Update post");
-            System.out.println("3 - Delete post");
-            System.out.println("4 - Find post by ID");
-            System.out.println("5 - Find posts by title");
-            System.out.println("6 - Find posts by owner ID");
-            System.out.println("7 - Find posts by owner username");
-            System.out.println("8 - Find my posts");
-            System.out.println("9 - Find all posts");
+            System.out.println("1 - Create post            4 - Find posts by title");
+            System.out.println("2 - Update post            5 - Find posts by owner username");
+            System.out.println("3 - Delete post            6 - Find my posts");
+            System.out.println("7 - Add comment to a post  8 - See a post's comments");
+            System.out.println("9 - List all posts");
             System.out.println("0 - Return");
             System.out.print("> ");
 
@@ -238,11 +237,11 @@ public class PostView {
                 case "1" -> createPost();
                 case "2" -> updatePost();
                 case "3" -> deletePost();
-                case "4" -> findPostById();
-                case "5" -> findPostsByTitle();
-                case "6" -> findPostsByOwnerId();
-                case "7" -> findPostsByOwnerUsername();
-                case "8" -> findOwnPosts();
+                case "4" -> findPostsByTitle();
+                case "5" -> findPostsByOwnerUsername();
+                case "6" -> findOwnPosts();
+                case "7" -> commentView.createComment();
+                case "8" -> commentView.findCommentsByPostId();
                 case "9" -> findAllPosts();
                 case "0" -> {
                     System.out.println("Exiting post menu.");
