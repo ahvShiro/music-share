@@ -8,7 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class DAO<T, Long extends Serializable> {
+public abstract class DAO<T, Long extends Serializable> implements DAOInterface<T> {
 
     protected final EntityManagerFactory emf;
     protected final EntityManager em;
@@ -19,6 +19,23 @@ public abstract class DAO<T, Long extends Serializable> {
         this.emf = Persistence.createEntityManagerFactory("persistenceUnit");
         this.em = emf.createEntityManager();
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    public Optional<T> findById(Long id) {
+        try {
+            T entity = em.find(persistentClass, id);
+            return Optional.ofNullable(entity);
+        } catch (PersistenceException e) {
+            throw new DAOException("Error finding entity with id: " + id);
+        }
+    }
+
+    public List<T> findAll() {
+        try {
+            return em.createQuery("SELECT c FROM " + persistentClass.getSimpleName() + " c ORDER BY c.createdAt DESC", persistentClass).getResultList();
+        } catch (PersistenceException e) {
+            throw new DAOException("Error fetching all comments");
+        }
     }
 
     public T save(T entity) {
@@ -60,15 +77,6 @@ public abstract class DAO<T, Long extends Serializable> {
                 em.getTransaction().rollback();
             }
             throw new DAOException("Error deleting entity: " + e.getMessage());
-        }
-    }
-
-    public void close() {
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-        if (emf != null && emf.isOpen()) {
-            emf.close();
         }
     }
 }

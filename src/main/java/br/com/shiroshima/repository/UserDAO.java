@@ -12,15 +12,6 @@ public class UserDAO extends DAO<User, Long> {
         super();
     }
 
-    public Optional<User> findById(Long id) {
-        try {
-            User user = em.find(User.class, id);
-            return Optional.ofNullable(user);
-        } catch (PersistenceException e) {
-            throw new DAOException("Error finding user with id: " + id);
-        }
-    }
-
     public Optional<User> findByUsername(String username) {
         try {
             User possibleUser = (User) em.createQuery("SELECT user from User user where user.username = ?1")

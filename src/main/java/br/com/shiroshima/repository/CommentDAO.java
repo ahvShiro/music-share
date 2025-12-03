@@ -5,29 +5,11 @@ import br.com.shiroshima.exception.DAOException;
 import jakarta.persistence.PersistenceException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommentDAO extends DAO<Comment, Long> {
 
     public CommentDAO() {
         super();
-    }
-
-    public List<Comment> findAll() {
-        try {
-            return em.createQuery("SELECT c FROM Comment c ORDER BY c.createdAt DESC", Comment.class).getResultList();
-        } catch (PersistenceException e) {
-            throw new DAOException("Error fetching all comments");
-        }
-    }
-
-    public Optional<Comment> findById(Long id) {
-        try {
-            Comment comment = em.find(Comment.class, id);
-            return Optional.ofNullable(comment);
-        } catch (PersistenceException e) {
-            throw new DAOException("Error finding comment with id: " + id);
-        }
     }
 
     // Tá bom só esse search né?

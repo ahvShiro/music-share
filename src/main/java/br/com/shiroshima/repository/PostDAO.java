@@ -7,21 +7,11 @@ import br.com.shiroshima.security.AuthContext;
 import jakarta.persistence.PersistenceException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class PostDAO extends DAO<Post, Long> {
 
     public PostDAO() {
         super();
-    }
-
-    public Optional<Post> findById(Long id) {
-        try {
-            Post post = em.find(Post.class, id);
-            return Optional.ofNullable(post);
-        } catch (PersistenceException e) {
-            throw new DAOException("Error finding post with id: " + id);
-        }
     }
 
     public List<Post> findByTitle(String title) {
@@ -63,16 +53,7 @@ public class PostDAO extends DAO<Post, Long> {
         }
     }
 
-    public List<Post> findAll() {
-        try {
-            return em.createQuery("SELECT p FROM Post p ORDER BY p.createdAt DESC", Post.class)
-                    .getResultList();
-        } catch (PersistenceException e) {
-            throw new DAOException("Error fetching all posts");
-        }
-    }
-
-    public List<Post> findByOwnerUsermane(String username) {
+    public List<Post> findByOwnerUsername(String username) {
         try {
             String jpql = "SELECT p FROM Post p JOIN FETCH p.owner WHERE LOWER(p.owner.username) = LOWER(:username) ORDER BY p.createdAt DESC";
 
