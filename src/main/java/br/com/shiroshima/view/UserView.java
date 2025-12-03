@@ -28,7 +28,7 @@ public class UserView {
         String bio = user.getBio();
 
         System.out.printf("== (%d) @%s ==%n", userId, username);
-        System.out.printf("> %s: %d%n", postOrPosts, postQt);
+        System.out.printf("> %d %s%n", postQt, postOrPosts);
 
         if (bio != null && !bio.isEmpty()) {
             System.out.printf("> Bio: %s%n", bio);
