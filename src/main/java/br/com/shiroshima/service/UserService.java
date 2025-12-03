@@ -3,11 +3,10 @@ package br.com.shiroshima.service;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.*;
 import br.com.shiroshima.repository.UserDAO;
-import br.com.shiroshima.security.AuthContext;
-import br.com.shiroshima.security.PasswordHasher;
-import jakarta.persistence.EntityManager;
+import br.com.shiroshima.utils.security.AuthContext;
+import br.com.shiroshima.utils.security.PasswordHasher;
+import br.com.shiroshima.utils.security.PasswordValidator;
 
-import java.util.InputMismatchException;
 import java.util.Optional;
 
 public class UserService {
@@ -18,6 +17,7 @@ public class UserService {
     }
 
     // VALIDATIONS
+    // Utilitário pra senha; lógica do metodo
     private void passwordValidation(String password) {
         if (password == null || password.isBlank()) {
             throw new BusinessRuleException("Password cannot be empty");
@@ -25,19 +25,7 @@ public class UserService {
         if (password.length() <= 5) {
             throw new BusinessRuleException("Password must have at least 5 characters");
         }
-        boolean hasUpper = false;
-        boolean hasLower = false;
-        boolean hasDigit = false;
-        boolean hasSpecial = false;
-
-        for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) hasUpper = true;
-            else if (Character.isLowerCase(c)) hasLower = true;
-            else if (Character.isDigit(c)) hasDigit = true;
-            else hasSpecial = true;
-        }
-
-        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+        if (!PasswordValidator.isPasswordValid(password)) {
             throw new BusinessRuleException("Password must have at least one lowercase and uppercase character, one digit, and one special character");
         }
     }
