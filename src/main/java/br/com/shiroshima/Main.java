@@ -1,6 +1,6 @@
 package br.com.shiroshima;
 
-import br.com.shiroshima.config.ApplicationContext;
+import br.com.shiroshima.utils.ApplicationContext;
 
 public class Main {
 

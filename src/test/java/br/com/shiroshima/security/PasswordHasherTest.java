@@ -1,5 +1,6 @@
 package br.com.shiroshima.security;
 
+import br.com.shiroshima.utils.security.PasswordHasher;
 import org.junit.jupiter.api.*;
 
 public class PasswordHasherTest {

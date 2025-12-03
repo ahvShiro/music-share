@@ -1,4 +1,4 @@
-package br.com.shiroshima.security;
+package br.com.shiroshima.utils.security;
 
 import br.com.shiroshima.entity.User;
 

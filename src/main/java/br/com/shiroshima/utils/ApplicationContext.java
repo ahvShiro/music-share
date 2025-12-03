@@ -1,4 +1,4 @@
-package br.com.shiroshima.config;
+package br.com.shiroshima.utils;
 
 import br.com.shiroshima.controller.CommentController;
 import br.com.shiroshima.controller.PostController;

@@ -3,7 +3,7 @@ package br.com.shiroshima.repository;
 import br.com.shiroshima.entity.Post;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.DAOException;
-import br.com.shiroshima.security.AuthContext;
+import br.com.shiroshima.utils.security.AuthContext;
 import jakarta.persistence.PersistenceException;
 
 import java.util.List;

@@ -3,7 +3,7 @@ package br.com.shiroshima.service;
 
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.BusinessRuleException;
-import br.com.shiroshima.security.AuthContext;
+import br.com.shiroshima.utils.security.AuthContext;
 
 public class AuthService {
 
