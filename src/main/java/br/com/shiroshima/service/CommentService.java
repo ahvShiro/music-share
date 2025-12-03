@@ -22,8 +22,8 @@ public class CommentService {
     }
 
     public void validateContent(String content) {
-        if (content == null) {
-            throw new BusinessRuleException("Comment cannot be null");
+        if (content == null || content.isBlank()) {
+            throw new BusinessRuleException("Comment cannot be empty");
         }
         if (content.length() > 250) {
             throw new BusinessRuleException("Comment must have less than 250 characters");
