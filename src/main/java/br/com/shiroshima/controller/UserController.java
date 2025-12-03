@@ -1,12 +1,8 @@
 package br.com.shiroshima.controller;
 
-import br.com.shiroshima.entity.ResultDTO;
+import br.com.shiroshima.dto.ResultDTO;
 import br.com.shiroshima.entity.User;
-import br.com.shiroshima.exception.BusinessRuleException;
-import br.com.shiroshima.repository.UserDAO;
 import br.com.shiroshima.service.UserService;
-
-import java.util.Scanner;
 
 public class UserController {
 

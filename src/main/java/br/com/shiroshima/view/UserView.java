@@ -1,7 +1,7 @@
 package br.com.shiroshima.view;
 
 import br.com.shiroshima.controller.UserController;
-import br.com.shiroshima.entity.ResultDTO;
+import br.com.shiroshima.dto.ResultDTO;
 import br.com.shiroshima.entity.User;
 
 import java.util.Scanner;

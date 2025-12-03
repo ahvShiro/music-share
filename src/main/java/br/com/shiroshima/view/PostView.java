@@ -1,9 +1,8 @@
 package br.com.shiroshima.view;
 
-import br.com.shiroshima.controller.CommentController;
 import br.com.shiroshima.controller.PostController;
 import br.com.shiroshima.entity.Post;
-import br.com.shiroshima.entity.ResultDTO;
+import br.com.shiroshima.dto.ResultDTO;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;

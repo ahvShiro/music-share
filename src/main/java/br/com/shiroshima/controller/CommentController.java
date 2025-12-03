@@ -1,10 +1,8 @@
 package br.com.shiroshima.controller;
 
 import br.com.shiroshima.entity.Comment;
-import br.com.shiroshima.entity.Post;
-import br.com.shiroshima.entity.ResultDTO;
+import br.com.shiroshima.dto.ResultDTO;
 import br.com.shiroshima.service.CommentService;
-import br.com.shiroshima.service.PostService;
 
 import java.util.List;
 
