@@ -4,7 +4,7 @@ import br.com.shiroshima.entity.Post;
 import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.*;
 import br.com.shiroshima.repository.PostDAO;
-import br.com.shiroshima.security.AuthContext;
+import br.com.shiroshima.utils.security.AuthContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,16 +14,6 @@ public class PostService {
 
     public PostService(PostDAO dao) {
         this.dao = dao;
-    }
-
-    private void validateOwner(Post post) {
-        User currentUser = AuthContext.getCurrentUser();
-        if (currentUser == null) {
-            throw new BusinessRuleException("You must be logged in to do this action");
-        }
-        if (post.getOwner() == null || !currentUser.getId().equals(post.getOwner().getId())) {
-            throw new BusinessRuleException("You do not have permission to do this action");
-        }
     }
 
     public Post create(String title, String music, String description) {
@@ -50,7 +40,7 @@ public class PostService {
         try {
             Post post = findById(postId);
 
-            validateOwner(post);
+            AuthService.assureUserIsOwner(post.getOwner());
 
             if (title == null || title.trim().isEmpty()) {
                 throw new BusinessRuleException("Title cannot be empty");
@@ -78,7 +68,7 @@ public class PostService {
         try {
             Post post = findById(postId);
 
-            validateOwner(post);
+            AuthService.assureUserIsOwner(post.getOwner());
 
             dao.delete(post);
 
@@ -123,7 +113,7 @@ public class PostService {
         if (username == null || username.isBlank()) {
             throw new BusinessRuleException("Invalid Username");
         }
-        return dao.findByOwnerUsermane(username);
+        return dao.findByOwnerUsername(username);
     }
 
     public List<Post> findOwn() {

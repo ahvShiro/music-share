@@ -1,6 +1,6 @@
 package br.com.shiroshima.view;
 
-import br.com.shiroshima.security.AuthContext;
+import br.com.shiroshima.utils.security.AuthContext;
 
 import java.util.Scanner;
 

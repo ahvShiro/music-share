@@ -6,7 +6,7 @@ import br.com.shiroshima.entity.User;
 import br.com.shiroshima.exception.BusinessRuleException;
 import br.com.shiroshima.exception.ServiceException;
 import br.com.shiroshima.repository.CommentDAO;
-import br.com.shiroshima.security.AuthContext;
+import br.com.shiroshima.utils.security.AuthContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +35,7 @@ public class CommentService {
             validateContent(content);
             User user = AuthContext.getCurrentUser();
 
-            if (user == null) {
-                throw new BusinessRuleException("You cannot do this action");
-            }
+            AuthService.assureUserIsOwner(user);
 
             Post post = postService.findById(postId);
 
@@ -63,14 +61,7 @@ public class CommentService {
             throw new BusinessRuleException("Comment not found!");
         }
         
-        User currentUser = AuthContext.getCurrentUser();
-        if (currentUser == null) {
-            throw new BusinessRuleException("You must be logged in to delete comments!");
-        }
-        
-        if (!currentUser.getId().equals(comment.getUser().getId())) {
-            throw new BusinessRuleException("You cannot delete other user's comments!");
-        }
+        AuthService.assureUserIsOwner(comment.getUser());
 
         dao.delete(comment);
     }
