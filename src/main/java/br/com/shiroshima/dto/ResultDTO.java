@@ -1,4 +1,4 @@
-package br.com.shiroshima.entity;
+package br.com.shiroshima.dto;
 
 public class ResultDTO<T> {
     private boolean success;
