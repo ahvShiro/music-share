@@ -62,8 +62,14 @@ public class CommentService {
         if (comment == null) {
             throw new BusinessRuleException("Comment not found!");
         }
-        if (comment.getUser() != AuthContext.getCurrentUser()) {
-            throw new BusinessRuleException("You cannot delete other user's posts");
+        
+        User currentUser = AuthContext.getCurrentUser();
+        if (currentUser == null) {
+            throw new BusinessRuleException("You must be logged in to delete comments!");
+        }
+        
+        if (!currentUser.getId().equals(comment.getUser().getId())) {
+            throw new BusinessRuleException("You cannot delete other user's comments!");
         }
 
         dao.delete(comment);

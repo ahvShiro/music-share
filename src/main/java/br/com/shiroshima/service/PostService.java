@@ -17,7 +17,11 @@ public class PostService {
     }
 
     private void validateOwner(Post post) {
-        if (post.getOwner() != AuthContext.getCurrentUser() || AuthContext.getCurrentUser() == null) {
+        User currentUser = AuthContext.getCurrentUser();
+        if (currentUser == null) {
+            throw new BusinessRuleException("You must be logged in to do this action");
+        }
+        if (post.getOwner() == null || !currentUser.getId().equals(post.getOwner().getId())) {
             throw new BusinessRuleException("You do not have permission to do this action");
         }
     }
